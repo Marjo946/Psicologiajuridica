@@ -1,6 +1,6 @@
 import streamlit as st
 
-# Preguntas con opciones, respuesta correcta y retroalimentación
+# Preguntas, opciones, respuesta correcta y retroalimentación
 questions = [
     {
         "question": "¿Qué estudia principalmente la psicología jurídica?",
@@ -64,17 +64,15 @@ questions = [
     }
 ]
 
-# Inicializar el estado si no existe
+# Inicializar estados
 if 'current_q' not in st.session_state:
     st.session_state.current_q = 0
 if 'answered' not in st.session_state:
     st.session_state.answered = False
-if 'correct' not in st.session_state:
-    st.session_state.correct = False
 
 st.title("🧠 Cuestionario de Psicología Jurídica")
 
-# Verificar si se terminó
+# Mostrar mensaje final
 if st.session_state.current_q >= len(questions):
     st.success("🎉 ¡Felicidades! Has completado el cuestionario.")
     st.balloons()
@@ -85,21 +83,18 @@ else:
     # Mostrar opciones
     selected = st.radio("Selecciona una opción:", q['options'], key=st.session_state.current_q)
 
-    # Botón de respuesta
-    if st.button("Responder"):
-        if not st.session_state.answered:
-            if q['options'].index(selected) == q['correct']:
-                st.success("✅ ¡Correcto!")
-                st.info(q['feedback'])
-                st.session_state.correct = True
-            else:
-                st.error("❌ Incorrecto.")
-                st.info(q['feedback'])
-            st.session_state.answered = True
+    # Botón para responder
+    if st.button("Responder") and not st.session_state.answered:
+        if q['options'].index(selected) == q['correct']:
+            st.success("✅ ¡Correcto!")
+        else:
+            st.error("❌ Incorrecto.")
+        st.info(q['feedback'])
+        st.session_state.answered = True
 
-    # Botón para pasar a la siguiente pregunta solo si fue correcta
-    if st.session_state.answered and st.session_state.correct:
+    # Botón para continuar
+    if st.session_state.answered:
         if st.button("Siguiente pregunta"):
             st.session_state.current_q += 1
             st.session_state.answered = False
-            st.session_state.correct = False
+
